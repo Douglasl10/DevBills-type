@@ -21,7 +21,7 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import type { LabelProps } from "recharts";
+import type { PieLabelProps } from "recharts/types/polar/Pie";
 
 const initialSummary: TransactionSummary = {
 	balance: 0,
@@ -53,8 +53,9 @@ const Dashboard = () => {
 		loadTrasactionsMontly();
 	}, [month, year]);
 
-	const renderPieChartLabel = ({ name, percent }: LabelProps) => {
-		return `${name} - ${(percent * 100).toFixed(1)}%`;
+	const renderPieChartLabel = ({ name, percent }: PieLabelProps) => {
+		const pct = percent !== undefined ? (percent * 100).toFixed(1) : "0.0";
+		return `${name} - ${pct}%`;
 	};
 
 	const formatToolTipValue = (value: number | string): string => {
