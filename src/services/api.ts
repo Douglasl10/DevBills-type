@@ -8,6 +8,7 @@ export const api: AxiosInstance = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 10000,
 });
+console.log(import.meta.env.VITE_API_URL);
 
 api.interceptors.request.use(
 	async (
@@ -17,7 +18,8 @@ api.interceptors.request.use(
 		if (user) {
 			try {
 				const token = await user.getIdToken();
-				config.headers.set("Authorization", `Bearer ${token}`);
+				config.headers = config.headers || {};
+				config.headers["Authorization"] = `Bearer ${token}`;
 			} catch (error) {
 				console.error("Erro ao obter o token de autenticação:", error);
 			}
