@@ -1,54 +1,71 @@
-# React + TypeScript + Vite
+# 💸 DevBills - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este é o frontend do projeto **DevBills**, uma aplicação web completa para gerenciamento de contas. Desenvolvida com React e TypeScript, esta interface fornece uma experiência intuitiva, responsiva e moderna para o usuário controlar suas despesas e receitas.
 
-Currently, two official plugins are available:
+## 📸 Preview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<img src="https://raw.githubusercontent.com/Douglasl10/DevBills-type/refs/heads/main/src/assets/Capa.png" />
+<br>
+<img src="https://raw.githubusercontent.com/Douglasl10/DevBills-type/refs/heads/main/src/assets/Capa-mobile.png" />
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Tecnologias
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- [React](https://reactjs.org/)
+- [Vite](https://vitejs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Hook Form](https://react-hook-form.com/)
+- [Zod](https://github.com/colinhacks/zod)
+- [Axios](https://axios-http.com/)
+- [React Router DOM](https://reactrouter.com/)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚙️ Funcionalidades
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- [x] Login e registro de usuários
+- [x] Listagem de contas por status (pagas, pendentes, vencidas)
+- [x] Cadastro, edição e exclusão de contas
+- [x] Filtros por data, tipo e status
+- [x] Integração total com a API REST
+- [x] Validação de formulários com feedback
+- [x] Interface responsiva e acessível
+
+---
+
+## 📁 Organização do Projeto
+
+📦 DevBills-type
+├── public/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── hooks/
+│   ├── services/  # Axios e configs da API
+│   ├── utils/
+│   ├── App.tsx
+│   └── main.tsx
+
+---
+
+👨‍💻 Desenvolvedor
+Douglas Oliveira
+
+## 🔧 Como rodar o projeto
+
+```bash
+# Clone o repositório
+git clone https://github.com/Douglasl10/DevBills-type.git
+
+# Acesse a pasta do projeto
+cd DevBills-type
+
+# Instale as dependências
+npm install
+
+# Rode o projeto em modo desenvolvimento
+npm run dev
+
+---
