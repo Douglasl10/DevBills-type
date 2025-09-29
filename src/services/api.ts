@@ -6,7 +6,7 @@ import { firebaseAuth } from "../config/firebase";
 
 export const api: AxiosInstance = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
-	timeout: 30000,
+	timeout: 10000,
 });
 console.log(import.meta.env.VITE_API_URL);
 
