@@ -53,9 +53,10 @@ const Transactios = () => {
 			setDeleteId(id);
 			await deleteTransaction(id);
 			toast.success("Sucesso ao deletar transação");
-			setFilteredTransactions((prev) =>
-				prev.filter((transaction) => transaction.id !== id),
-			);
+
+			// garante sincronização dos dois estados
+			setTransactions((prev) => prev.filter((t) => t.id !== id));
+			setFilteredTransactions((prev) => prev.filter((t) => t.id !== id));
 		} catch (err) {
 			toast.error("Erro ao deletar transação");
 			console.error(err);
@@ -77,12 +78,11 @@ const Transactios = () => {
 	const handleSearchChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
 	): void => {
-		setSearchText(event.target.value);
+		const value = event.target.value;
+		setSearchText(value);
 		setFilteredTransactions(
 			transactions.filter((transaction) =>
-				transaction.description
-					.toUpperCase()
-					.includes(event.target.value.toUpperCase()),
+				transaction.description.toUpperCase().includes(value.toUpperCase()),
 			),
 		);
 	};
@@ -153,41 +153,32 @@ const Transactios = () => {
 						<table className="divide-y divide-gray-700 min-h-full w-full">
 							<thead>
 								<tr>
-									<th
-										scope="col"
-										className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-									>
+									<th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">
 										Descrição
 									</th>
-									<th
-										scope="col"
-										className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-									>
+									<th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">
 										Data
 									</th>
-									<th
-										scope="col"
-										className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-									>
+									<th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">
 										Categoria
 									</th>
-									<th
-										scope="col"
-										className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-									>
+									<th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">
 										Valor
 									</th>
-									<th
-										scope="col"
-										className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-									>
+									<th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">
 										{" "}
 									</th>
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-gray-700">
 								{filteredTransactions.map((transaction) => (
-									<tr key={transaction.id} className="hover:bg-gray-800">
+									<tr
+										key={
+											transaction.id ||
+											`${transaction.description}-${transaction.date}`
+										}
+										className="hover:bg-gray-800"
+									>
 										<td className="px-3 py-4 text-gray-400 whitespace-nowrap">
 											<div className="flex items-center">
 												<div className="mr-2">
@@ -205,29 +196,31 @@ const Transactios = () => {
 										<td className="px-3 py-4 text-sm text-gray-400 whitespace-nowrap">
 											{formatDate(transaction.date)}
 										</td>
-
 										<td className="px-3 py-4 text-sm text-gray-400 whitespace-nowrap">
 											<div className="flex items-center">
 												<div
 													className="mr-2 w-2 h-2 rounded-full"
 													style={{
-														backgroundColor: transaction.category.color,
+														backgroundColor:
+															transaction.category?.color || "#999",
 													}}
 												/>
 												<span className="text-sm text-gray-400">
-													{transaction.category.name}
+													{transaction.category?.name ?? "Sem categoria"}
 												</span>
 											</div>
 										</td>
-
 										<td className="px-6 py-4 text-sm text-gray-400 whitespace-nowrap">
 											<span
-												className={`${transaction.type === TransactionType.INCOME ? "text-green-600" : "text-red-700"}`}
+												className={`${
+													transaction.type === TransactionType.INCOME
+														? "text-green-600"
+														: "text-red-700"
+												}`}
 											>
 												{formatCurrency(transaction.amount)}
 											</span>
 										</td>
-
 										<td className="px-3 py-4 whitespace-nowrap">
 											<button
 												type="button"
