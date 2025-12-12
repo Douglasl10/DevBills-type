@@ -21,7 +21,7 @@ const Login = () => {
 	}, [authState.user, authState.isLoading, navigate]);
 
 	return (
-		<div className="min-h-screen bg-gray-200 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+		<div className="min-h-screen bg-gray-950 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-md w-full space-y-8">
 				<header>
 					<h1 className="text-4xl font-bold text-center text-gray-900">
@@ -32,7 +32,7 @@ const Login = () => {
 					</p>
 				</header>
 
-				<main className="mt-8 space-y-6 bg-white py-8 px-4 shadow-md rounded-lg sm:px-10">
+				<main className="mt-8 space-y-6 bg-gray-50 py-8 px-4 shadow-md rounded-lg sm:px-10">
 					<section className="mb-6">
 						<h2 className="text-lg font-medium text-gray-900">
 							Faça Login para continuar
