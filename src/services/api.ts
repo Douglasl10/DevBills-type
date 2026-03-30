@@ -6,7 +6,7 @@ import { firebaseAuth } from "../config/firebase";
 
 export const api: AxiosInstance = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
-	timeout: 10000,
+	timeout: 30000,
 });
 console.log(import.meta.env.VITE_API_URL);
 
@@ -25,5 +25,15 @@ api.interceptors.request.use(
 			}
 		}
 		return config;
+	},
+);
+
+api.interceptors.response.use(
+	(response) => response,
+	(error) => {
+		if (error.code === "ECONNABORTED" && error.message.includes("timeout")) {
+			console.error("A requisição excedeu o tempo limite (timeout). Verifique sua conexão ou tente novamente mais tarde.");
+		}
+		return Promise.reject(error);
 	},
 );
