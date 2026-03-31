@@ -36,19 +36,31 @@ const Dashboard = () => {
 	const [month, setMonth] = useState(currentDate.getMonth() + 1);
 	const [summary, setSummary] = useState<TransactionSummary>(initialSummary);
 	const [montlyItemsData, setMontlyItemsData] = useState<MontlyItem[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		async function loadTrasactionsSummary() {
-			const response = await getTransactionsSummary(month, year);
-			setSummary(response);
+			try {
+				setIsLoading(true);
+				const response = await getTransactionsSummary(month, year);
+				setSummary(response);
+			} catch (error) {
+				console.error("Erro ao carregar resumo de transações:", error);
+			} finally {
+				setIsLoading(false);
+			}
 		}
 		loadTrasactionsSummary();
 	}, [month, year]);
 
 	useEffect(() => {
 		async function loadTrasactionsMontly() {
-			const response = await getTransactionsMontly(month, year, 4);
-			setMontlyItemsData(response.history);
+			try {
+				const response = await getTransactionsMontly(month, year, 4);
+				setMontlyItemsData(response.history);
+			} catch (error) {
+				console.error("Erro ao carregar histórico mensal:", error);
+			}
 		}
 		loadTrasactionsMontly();
 	}, [month, year]);
@@ -75,131 +87,140 @@ const Dashboard = () => {
 					onYearChange={setYear}
 				/>
 			</div>
-			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-				<Card
-					icon={<Wallet size={20} className="text-primary-500" />}
-					title="Saldo"
-					hover={true}
-					glowEffect={summary.balance > 0}
-				>
-					<p
-						className={`text-2xl font-semibold mt-2
+
+			{isLoading ? (
+				<div className="flex justify-center items-center min-h-[400px]">
+					<div className="animate-spin rounded-full border-t-2 border-b-2 border-primary-500 w-12 h-12"></div>
+				</div>
+			) : (
+				<>
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+						<Card
+							icon={<Wallet size={20} className="text-primary-500" />}
+							title="Saldo"
+							hover={true}
+							glowEffect={summary.balance > 0}
+						>
+							<p
+								className={`text-2xl font-semibold mt-2
 				${summary.balance > 0 ? "text-green-500" : "text-red-600"}
 				
 				`}
-					>
-						{formatCurrency(summary.balance)}
-					</p>
-				</Card>
+							>
+								{formatCurrency(summary.balance)}
+							</p>
+						</Card>
 
-				<Card
-					icon={<ArrowUp size={20} className="text-primary-500" />}
-					title="Receitas"
-					hover={true}
-					glowEffect={true}
-				>
-					<p className={`text-2xl font-semibold mt-2 text-green-500`}>
-						{formatCurrency(summary.totalIncomes)}
-					</p>
-				</Card>
+						<Card
+							icon={<ArrowUp size={20} className="text-primary-500" />}
+							title="Receitas"
+							hover={true}
+							glowEffect={true}
+						>
+							<p className={`text-2xl font-semibold mt-2 text-green-500`}>
+								{formatCurrency(summary.totalIncomes)}
+							</p>
+						</Card>
 
-				<Card
-					icon={<Wallet size={20} className="text-red-600" />}
-					title="Despesas"
-					hover={true}
-					glowEffect={summary.totalExpenses > 0}
-				>
-					<p className={`text-2xl font-semibold mt-2 text-red-600`}>
-						{formatCurrency(summary.totalExpenses)}
-					</p>
-				</Card>
-			</div>
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-3">
-				<Card
-					icon={<TrendingUp size={20} className="text-primary-500" />}
-					title="Despesas por Categorias"
-					className="min-h-[300px]"
-					hover={true}
-				>
-					{summary.expensesByCategory.length > 0 ? (
-						<div className="height-72">
-							<ResponsiveContainer width="100%" height={300}>
-								<PieChart>
-									<Pie
-										data={summary.expensesByCategory}
-										cx="50%"
-										cy="50%"
-										outerRadius={80}
-										dataKey="amount"
-										nameKey="categoryName"
-										label={renderPieChartLabel}
-									>
-										{summary.expensesByCategory.map((entry) => (
-											<Cell key={entry.categoryId} fill={entry.categoryColor} />
-										))}
-									</Pie>
-									<Tooltip formatter={formatToolTipValue} />
-								</PieChart>
-							</ResponsiveContainer>
-						</div>
-					) : (
-						<div className="flex justify-center items-center h-65 text-gray-500">
-							Nenhuma despesa registrada
-						</div>
-					)}
-				</Card>
-
-				<Card
-					icon={<Calendar size={20} className="text-primary-500" />}
-					title="Historico Mensal"
-					className="min-h-80 p-2.5"
-					hover={true}
-					glowEffect={true}
-				>
-					<div className="h-72 mt-4">
-						{montlyItemsData.length > 0 ? (
-							<ResponsiveContainer width="100%" height="100%">
-								<BarChart data={montlyItemsData} margin={{ left: 40 }}>
-									<CartesianGrid
-										strokeDasharray="3 3"
-										stroke="rgba(255, 255, 255, 0.1)"
-									/>
-									<XAxis
-										dataKey="name"
-										stroke="#9aa3b8"
-										tick={{ style: { textTransform: "capitalize" } }}
-									/>
-									<YAxis
-										stroke="#9aa3b8"
-										tickFormatter={formatCurrency}
-										tick={{ style: { fontSize: "12px" } }}
-									/>
-									<Tooltip
-										formatter={formatCurrency}
-										contentStyle={{
-											backgroundColor: "#1a1a1a",
-											borderColor: "#2a2a2a",
-										}}
-										labelStyle={{ color: "#f8f8f8" }}
-									/>
-									<Legend />
-									<Bar
-										dataKey="expense"
-										name="Despesas"
-										stackId="a"
-										fill="#de0232"
-									/>
-									<Bar dataKey="income" fill="#00fc32" name="Receitas" />
-								</BarChart>
-							</ResponsiveContainer>
-						) : (
-							<div className="flex justify-center items-center h-65 text-gray-500">
-								Nenhuma despesa registrada
-							</div>
-						)}
+						<Card
+							icon={<Wallet size={20} className="text-red-600" />}
+							title="Despesas"
+							hover={true}
+							glowEffect={summary.totalExpenses > 0}
+						>
+							<p className={`text-2xl font-semibold mt-2 text-red-600`}>
+								{formatCurrency(summary.totalExpenses)}
+							</p>
+						</Card>
 					</div>
-				</Card>
-			</div>
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-3">
+						<Card
+							icon={<TrendingUp size={20} className="text-primary-500" />}
+							title="Despesas por Categorias"
+							className="min-h-[300px]"
+							hover={true}
+						>
+							{summary.expensesByCategory.length > 0 ? (
+								<div className="height-72">
+									<ResponsiveContainer width="100%" height={300}>
+										<PieChart>
+											<Pie
+												data={summary.expensesByCategory}
+												cx="50%"
+												cy="50%"
+												outerRadius={80}
+												dataKey="amount"
+												nameKey="categoryName"
+												label={renderPieChartLabel}
+											>
+												{summary.expensesByCategory.map((entry) => (
+													<Cell key={entry.categoryId} fill={entry.categoryColor} />
+												))}
+											</Pie>
+											<Tooltip formatter={formatToolTipValue} />
+										</PieChart>
+									</ResponsiveContainer>
+								</div>
+							) : (
+								<div className="flex justify-center items-center h-65 text-gray-500">
+									Nenhuma despesa registrada
+								</div>
+							)}
+						</Card>
+
+						<Card
+							icon={<Calendar size={20} className="text-primary-500" />}
+							title="Historico Mensal"
+							className="min-h-80 p-2.5"
+							hover={true}
+							glowEffect={true}
+						>
+							<div className="h-72 mt-4">
+								{montlyItemsData.length > 0 ? (
+									<ResponsiveContainer width="100%" height="100%">
+										<BarChart data={montlyItemsData} margin={{ left: 40 }}>
+											<CartesianGrid
+												strokeDasharray="3 3"
+												stroke="rgba(255, 255, 255, 0.1)"
+											/>
+											<XAxis
+												dataKey="name"
+												stroke="#9aa3b8"
+												tick={{ style: { textTransform: "capitalize" } }}
+											/>
+											<YAxis
+												stroke="#9aa3b8"
+												tickFormatter={formatCurrency}
+												tick={{ style: { fontSize: "12px" } }}
+											/>
+											<Tooltip
+												formatter={formatCurrency}
+												contentStyle={{
+													backgroundColor: "#1a1a1a",
+													borderColor: "#2a2a2a",
+												}}
+												labelStyle={{ color: "#f8f8f8" }}
+											/>
+											<Legend />
+											<Bar
+												dataKey="expense"
+												name="Despesas"
+												stackId="a"
+												fill="#de0232"
+											/>
+											<Bar dataKey="income" fill="#00fc32" name="Receitas" />
+										</BarChart>
+									</ResponsiveContainer>
+								) : (
+									<div className="flex justify-center items-center h-65 text-gray-500">
+										Nenhuma despesa registrada
+									</div>
+								)}
+							</div>
+						</Card>
+					</div>
+				</>
+			)}
 		</div>
 	);
 };
